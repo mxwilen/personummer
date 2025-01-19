@@ -6,6 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 
+import src.main.Exceptions.ParsingException;
+import src.main.Helper.Credential;
+
 public class SocialSecurityNumber implements Credential {
     String credentialID;
     char checkSum;
@@ -40,6 +43,10 @@ public class SocialSecurityNumber implements Credential {
         return this.parsedDateString.substring(2, this.parsedDateString.length());
     }
 
+    public String getFullDate() {
+        return this.parsedDateString;
+    }
+
     @Override
     public void outputResult() {
         System.out.printf(
@@ -47,14 +54,14 @@ public class SocialSecurityNumber implements Credential {
                         VALID       Credential ID         : %s
                          PER        Birth Number          : %s
                                     Checksum              : %s
-                                    Birth Date (YYMMDD)   : %s
+                                    Birth Date (YYYYMMDD) : %s
                                     Age                   : %d
                         -------------------------------------------------
                                 """,
                 this.credentialID,
                 this.birthNumber,
                 this.checkSum,
-                this.getMinimalDate(),
+                this.getFullDate(),
                 this.age);
     }
 
@@ -84,9 +91,11 @@ public class SocialSecurityNumber implements Credential {
         } else if (unparsedDateString.length() == 6) { // yyMMdd format
             LocalDate date = LocalDate.parse(unparsedDateString, yyMMddFormatter);
 
-            // Adjust the year dynamically
             int year = date.getYear();
-            if (year % 100 > LocalDate.now().getYear() % 100) {
+            // Adjust the year dynamically
+            if (this.credentialID.charAt(this.credentialID.length() - 5) == '+') {
+                year = 1800 + (year % 100); // '+' indicates next previous century
+            } else if (year % 100 > LocalDate.now().getYear() % 100) {
                 year = 1900 + (year % 100); // Previous century
             } else {
                 year = 2000 + (year % 100); // Current century

@@ -5,22 +5,24 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 
+import src.main.Exceptions.ParsingException;
+import src.main.Helper.Credential;
+import src.main.Helper.OrganizationMapper;
+import src.main.Helper.OrganizationMapper.OrganizationType;
+
 public class OrganizationNumber implements Credential {
     String credentialID;
     char checkSum;
     String birthNumber;
-    String parsedDateString;
-
-    private enum OrgType {
-        TEST1,
-        TEST2
-    }
+    String dateString;
+    OrganizationType orgType;
 
     public OrganizationNumber(String credentialID, char checkSum, String birthNumber, String dateString) {
         this.credentialID = credentialID;
         this.checkSum = checkSum;
         this.birthNumber = birthNumber;
-        this.parsedDateString = parseDateString(dateString);
+        this.dateString = dateString;
+        this.orgType = parseOrgType(dateString);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class OrganizationNumber implements Credential {
 
     @Override
     public String getMinimalDate() {
-        return this.parsedDateString.substring(2, this.parsedDateString.length());
+        return this.dateString.length() == 6 ? this.dateString : this.dateString.substring(2);
     }
 
     @Override
@@ -57,44 +59,27 @@ public class OrganizationNumber implements Credential {
                 this.credentialID,
                 this.birthNumber,
                 this.checkSum,
-                this.parsedDateString,
-                parseOrgType().toString());
+                this.dateString,
+                this.orgType.toString());
     }
 
-    private OrgType parseOrgType() {
-        return OrgType.TEST1;
+    public OrganizationType getOrgType() {
+        return this.orgType;
     }
 
-    private String parseDateString(String unparsedDateString) {
-        DateTimeFormatter yyyyMMddFormatter = new DateTimeFormatterBuilder()
-                .appendPattern("uuuuMMdd")
-                .toFormatter()
-                .withResolverStyle(ResolverStyle.STRICT);
-
-        DateTimeFormatter yyMMddFormatter = new DateTimeFormatterBuilder()
-                .appendPattern("uuMMdd")
-                .toFormatter()
-                .withResolverStyle(ResolverStyle.STRICT);
-
+    private OrganizationType parseOrgType(String unparsedDateString) {
+        String firstDigit;
         if (unparsedDateString.length() == 8) { // yyyyMMdd format
-            LocalDate date = LocalDate.parse(unparsedDateString, yyyyMMddFormatter);
-            return date.format(yyyyMMddFormatter);
+            firstDigit = unparsedDateString.substring(2, 3);
+            this.orgType = OrganizationMapper.getOrganizationType(firstDigit);
         } else if (unparsedDateString.length() == 6) { // yyMMdd format
-            LocalDate date = LocalDate.parse(unparsedDateString, yyMMddFormatter);
-
-            // Adjust the year dynamically
-            int year = date.getYear();
-            if (year % 100 > LocalDate.now().getYear() % 100) {
-                year = 1900 + (year % 100); // Previous century
-            } else {
-                year = 2000 + (year % 100); // Current century
-            }
-
-            date = LocalDate.of(year, date.getMonthValue(), date.getDayOfMonth());
-            return date.format(yyyyMMddFormatter);
+            firstDigit = unparsedDateString.substring(0, 1);
+            this.orgType = OrganizationMapper.getOrganizationType(firstDigit);
         } else {
             throw new ParsingException(
-                    "ORG - ParsingException: Problem with parsing date. Date string neither 6 or 8 digits long");
+                    "ORG - ParsingException: Problem with parsing organization type");
         }
+
+        return this.orgType;
     }
 }

@@ -1,6 +1,4 @@
-package src.main;
-
-import src.main.CredentialNumber.CredType;
+package src.main.Helper;
 
 public interface Credential {
     String getCredentialID();

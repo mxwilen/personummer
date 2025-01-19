@@ -1,4 +1,4 @@
-package src.main;
+package src.main.Exceptions;
 
 public class LuhnException extends RuntimeException {
     public LuhnException() {

@@ -6,6 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 
+import src.main.Exceptions.ParsingException;
+import src.main.Helper.Credential;
+
 public class CoordinationNumber implements Credential {
     String credentialID;
     char checkSum;

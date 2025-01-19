@@ -1,6 +1,8 @@
-package src.main;
+package src.main.Helper;
 
-import src.main.CredentialNumber.CredType;
+import src.main.CoordinationNumber;
+import src.main.OrganizationNumber;
+import src.main.SocialSecurityNumber;
 
 public class CredentialFactory {
     public Credential generateCredential(String credentialID) {

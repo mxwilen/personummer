@@ -5,6 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import src.main.Exceptions.LuhnException;
+import src.main.Exceptions.ParsingException;
+import src.main.Exceptions.ValidationException;
+import src.main.Helper.Credential;
+import src.main.Helper.CredentialFactory;
+
 public class ValidityCheck {
 
     public ValidityCheck(String credentialID) {
@@ -77,7 +83,8 @@ public class ValidityCheck {
     }
 
     public static void main(String[] args) {
-        List<String> pns = Arrays.asList(
+        List<String> creds = Arrays.asList(
+                // PER
                 "201701102384", // Valid
                 "141206-2380", // Valid
                 "20080903-2386", // Valid
@@ -94,53 +101,20 @@ public class ValidityCheck {
                 "189912299816", // Valid
                 "201701272394", // Invalid
                 "190302299813", // Invalid
-                "1666013-1111", // Invalid
-                "16660133-1111" // Invalid
-        );
+                "4607137455", // Invalid
+                "19900118+9811", // Valid ish?
 
-        List<String> sams = Arrays.asList(
-                "190910799824" // Valid
-        );
+                // SAM
+                "190910799824", // Valid
 
-        List<String> orgs = Arrays.asList(
+                // ORG
                 "556614-3185", // Valid
                 "16556601-6399", // Valid
                 "262000-1111", // Valid
                 "857202-7566" // Valid
         );
 
-        System.out.println("PNS Validation Results:");
-        for (String credentialID : pns) {
-            try {
-                new ValidityCheck(credentialID);
-            } catch (ValidationException e) {
-                System.out.printf(
-                        """
-                                INVALID     Credential ID         : %s
-
-                                """, credentialID);
-                System.err.println(e.getMessage());
-                System.err.printf("-------------------------------------------------\n");
-            }
-        }
-
-        System.out.println("\n\nSAMS Validation Results:");
-        for (String credentialID : sams) {
-            try {
-                new ValidityCheck(credentialID);
-            } catch (ValidationException e) {
-                System.out.printf(
-                        """
-                                INVALID     Credential ID         : %s
-
-                                """, credentialID);
-                System.err.println(e.getMessage());
-                System.err.printf("-------------------------------------------------\n");
-            }
-        }
-
-        System.out.println("\n\nORGS Validation Results:");
-        for (String credentialID : orgs) {
+        for (String credentialID : creds) {
             try {
                 new ValidityCheck(credentialID);
             } catch (ValidationException e) {
