@@ -79,7 +79,7 @@ public class ValidityCheck {
             throw new LuhnException("LuhnException: Checksum is not valid: yymmdd=" + yymmdd + ", calculated checksum="
                     + calculatedCheckSum);
 
-        return isValid;
+        return true;
     }
 
     public static void main(String[] args) {
@@ -124,7 +124,7 @@ public class ValidityCheck {
 
                                 """, credentialID);
                 System.err.println(e.getMessage());
-                System.err.printf("-------------------------------------------------\n");
+                System.err.print("-------------------------------------------------\n");
             }
         }
     }

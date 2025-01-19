@@ -1,8 +1,48 @@
+## Filstruktur
+```bash
+.
+├── README.md
+├── start.sh                               # bash script för kompilering och exekvering
+└── src
+    ├── main
+    │   ├── Exceptions                     # Diverse exceptions
+    │   │   ├── LuhnException.java
+    │   │   ├── ParsingException.java
+    │   │   └── ValidationException.java 
+    │   ├── Helper
+    │   │   ├── OrganizationMapper.java    # Hjälper mappa typ av juridisk organisation
+    │   │   ├── Credential.java            # Abstrakta klassen för alla "nummer"
+    │   │   └── CredentialFactory.java     # Sköter byggning av rätt "nummer"-implementation
+    │   ├── CoordinationNumber.java        # Samordningsnummer
+    │   ├── OrganizationNumber.java        # Organisationsnummer
+    │   ├── SocialSecurityNumber.java      # Personnummer
+    │   └── ValidityCheck.java             # huvudklass (main, valideringscheck av luhn, mm)
+    └── test
+```
+
+## Exekvering (från CLI)
+> Ska även funka fint genom Intellij :)
+
+Kör startscriptet från root dir genom 
+```
+sh start.sh
+```
+
+Alternativt:
+```
+$ chmod +x start.sh
+
+$ ./start.sh
+```
+
+## Överskådlig struktur över programmet
+<img src="programkarta.png" width="800px">
+
+## Mina egna notes från problemuppställning
+
 ValidityCheck
 - logga kontroller som görs
 - input är string
-
-
 
 Personnummer:
 - 6 siffror

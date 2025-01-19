@@ -1,21 +1,16 @@
 package src.main;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
-
 import src.main.Exceptions.ParsingException;
 import src.main.Helper.Credential;
 import src.main.Helper.OrganizationMapper;
 import src.main.Helper.OrganizationMapper.OrganizationType;
 
 public class OrganizationNumber implements Credential {
-    String credentialID;
-    char checkSum;
-    String birthNumber;
-    String dateString;
-    OrganizationType orgType;
+    private final String credentialID;
+    private final char checkSum;
+    private final String birthNumber;
+    private final String dateString;
+    private OrganizationType orgType;
 
     public OrganizationNumber(String credentialID, char checkSum, String birthNumber, String dateString) {
         this.credentialID = credentialID;
@@ -23,11 +18,6 @@ public class OrganizationNumber implements Credential {
         this.birthNumber = birthNumber;
         this.dateString = dateString;
         this.orgType = parseOrgType(dateString);
-    }
-
-    @Override
-    public String getCredentialID() {
-        return this.credentialID;
     }
 
     @Override
@@ -61,10 +51,6 @@ public class OrganizationNumber implements Credential {
                 this.checkSum,
                 this.dateString,
                 this.orgType.toString());
-    }
-
-    public OrganizationType getOrgType() {
-        return this.orgType;
     }
 
     private OrganizationType parseOrgType(String unparsedDateString) {

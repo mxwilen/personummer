@@ -1,7 +1,6 @@
 package src.main.Helper;
 
 public interface Credential {
-    String getCredentialID();
 
     char getCheckSum();
 

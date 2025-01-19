@@ -10,10 +10,10 @@ import src.main.Exceptions.ParsingException;
 import src.main.Helper.Credential;
 
 public class SocialSecurityNumber implements Credential {
-    String credentialID;
-    char checkSum;
-    String birthNumber;
-    String parsedDateString;
+    private final String credentialID;
+    private final char checkSum;
+    private final String birthNumber;
+    private final String parsedDateString;
     int age;
 
     public SocialSecurityNumber(String credentialID, char checkSum, String birthNumber, String dateString) {
@@ -21,11 +21,6 @@ public class SocialSecurityNumber implements Credential {
         this.checkSum = checkSum;
         this.birthNumber = birthNumber;
         this.parsedDateString = parseDateString(dateString);
-    }
-
-    @Override
-    public String getCredentialID() {
-        return this.credentialID;
     }
 
     @Override
@@ -40,7 +35,7 @@ public class SocialSecurityNumber implements Credential {
 
     @Override
     public String getMinimalDate() {
-        return this.parsedDateString.substring(2, this.parsedDateString.length());
+        return this.parsedDateString.substring(2);
     }
 
     public String getFullDate() {

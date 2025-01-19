@@ -10,14 +10,14 @@ import src.main.Exceptions.ParsingException;
 import src.main.Helper.Credential;
 
 public class CoordinationNumber implements Credential {
-    String credentialID;
-    char checkSum;
-    String birthNumber;
-    String parsedDateString;
-    String birthDate;
-    int age;
+    private final String credentialID;
+    private final char checkSum;
+    private final String birthNumber;
+    private final String parsedDateString;
+    private final String birthDate;
+    private int age;
 
-    public class DateCheckerResponse {
+    public static class DateCheckerResponse {
         boolean isValid;
         String coordDate;
         String birthdate;
@@ -35,11 +35,6 @@ public class CoordinationNumber implements Credential {
         this.parsedDateString = response.coordDate;
         this.birthDate = response.birthdate;
 
-    }
-
-    @Override
-    public String getCredentialID() {
-        return this.credentialID;
     }
 
     @Override

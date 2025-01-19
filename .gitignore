@@ -1,2 +1,5 @@
 old/
 build/
+out/
+.DS_Store
+.idea
