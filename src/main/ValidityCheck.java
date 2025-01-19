@@ -8,13 +8,14 @@ import java.util.regex.Pattern;
 public class ValidityCheck {
 
     public ValidityCheck(String credentialID) {
-        CredentialNumber credential;
+        Credential credential;
         if (!isValidString(credentialID)) {
             throw new ValidationException("ValidationException: Input doesn't match required format");
         }
 
         try {
-            credential = new CredentialNumber(credentialID);
+            // credential = new CredentialNumber(credentialID);
+            credential = new CredentialFactory().generateCredential(credentialID);
         } catch (ParsingException e) {
             throw new ValidationException(e.getMessage());
         } catch (DateTimeParseException e) {
@@ -23,22 +24,9 @@ public class ValidityCheck {
 
         try {
             if (isValidLuhn(credential.getMinimalDate(),
-                    credential.getbirthNumber(),
+                    credential.getBirthNumber(),
                     credential.getCheckSum())) {
-                System.out.printf(
-                        """
-                                VALID       Credential ID         : %s
-                                            Birth Number          : %s
-                                            Checksum              : %s
-                                            Birth Date (YYYYMMDD) : %s
-                                            Credential Type       : %s
-                                -------------------------------------------------
-                                        """,
-                        credential.getCredentialID(),
-                        credential.getbirthNumber(),
-                        credential.getCheckSum(),
-                        credential.getFullDate(),
-                        credential.getCredType());
+                credential.outputResult();
             }
         } catch (LuhnException e) {
             throw new ValidationException(e.getMessage());
@@ -82,7 +70,8 @@ public class ValidityCheck {
 
         boolean isValid = (Character.getNumericValue(checksum) == calculatedCheckSum);
         if (!isValid)
-            throw new LuhnException("LuhnException: Checksum is not valid: yymmdd=" + yymmdd);
+            throw new LuhnException("LuhnException: Checksum is not valid: yymmdd=" + yymmdd + ", calculated checksum="
+                    + calculatedCheckSum);
 
         return isValid;
     }
