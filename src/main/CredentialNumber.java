@@ -3,7 +3,6 @@ package src.main;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 
 public class CredentialNumber {
@@ -113,7 +112,8 @@ public class CredentialNumber {
             parseDateResponse.minimalDate = date.format(yyMMddFormatter);
             return parseDateResponse;
         } else {
-            throw new ParsingException("Problem with parsing date.");
+            throw new ParsingException(
+                    "ParsingException: Problem with parsing date. Date string neither 6 or 8 digits long");
         }
     }
 

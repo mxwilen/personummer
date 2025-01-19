@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class ValidityCheck {
-    CredentialNumber credential;
 
     public ValidityCheck(String credentialID) {
+        CredentialNumber credential;
         if (!isValidString(credentialID)) {
-            throw new ValidationException("Doesn't match input format");
+            throw new ValidationException("ValidationException: Input doesn't match required format");
         }
 
         try {
@@ -18,7 +18,7 @@ public class ValidityCheck {
         } catch (ParsingException e) {
             throw new ValidationException(e.getMessage());
         } catch (DateTimeParseException e) {
-            throw new ValidationException(e.getMessage());
+            throw new ValidationException("DateTimeParseException: " + e.getMessage());
         }
 
         try {
@@ -40,7 +40,7 @@ public class ValidityCheck {
                         credential.getFullDate(),
                         credential.getCredType());
             }
-        } catch (ValidationException e) {
+        } catch (LuhnException e) {
             throw new ValidationException(e.getMessage());
         }
     }
@@ -49,7 +49,6 @@ public class ValidityCheck {
      * Validates a string against a regex pattern.
      *
      * @param input The input string to validate.
-     * @param regex The regex pattern to match.
      * @return True if the string matches the pattern, false otherwise.
      */
     public static boolean isValidString(String input) {
@@ -83,7 +82,7 @@ public class ValidityCheck {
 
         boolean isValid = (Character.getNumericValue(checksum) == calculatedCheckSum);
         if (!isValid)
-            throw new ValidationException("Checksum is not valid: yymmdd=" + yymmdd);
+            throw new LuhnException("LuhnException: Checksum is not valid: yymmdd=" + yymmdd);
 
         return isValid;
     }
@@ -136,7 +135,7 @@ public class ValidityCheck {
             }
         }
 
-        System.out.println("\nSAMS Validation Results:");
+        System.out.println("\n\nSAMS Validation Results:");
         for (String credentialID : sams) {
             try {
                 new ValidityCheck(credentialID);
@@ -151,7 +150,7 @@ public class ValidityCheck {
             }
         }
 
-        System.out.println("\nORGS Validation Results:");
+        System.out.println("\n\nORGS Validation Results:");
         for (String credentialID : orgs) {
             try {
                 new ValidityCheck(credentialID);
