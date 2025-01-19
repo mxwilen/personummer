@@ -15,7 +15,6 @@ public class CredentialNumber {
 
     static class ParseDateResponse {
         boolean success;
-        Exception exception;
         String fullDate;
         String minimalDate;
     }
@@ -28,7 +27,6 @@ public class CredentialNumber {
     private final ParseDateResponse parseDateResponse;
     private final String fullDate;
     private final String minimalDate;
-    private Exception exception;
 
     public CredentialNumber(String credentialID) {
         this.credentialID = credentialID;
@@ -43,7 +41,6 @@ public class CredentialNumber {
             this.minimalDate = this.parseDateResponse.minimalDate;
         } else {
             this.fullDate = this.minimalDate = null;
-            this.exception = this.parseDateResponse.exception;
         }
     }
 
@@ -93,42 +90,30 @@ public class CredentialNumber {
 
         ParseDateResponse parseDateResponse = new ParseDateResponse();
 
-        try {
-            if (dateString.length() == 8) { // yyyyMMdd format
-                LocalDate date = LocalDate.parse(dateString, yyyyMMddFormatter);
-                parseDateResponse.success = true;
-                parseDateResponse.fullDate = date.format(yyyyMMddFormatter);
-                parseDateResponse.minimalDate = date.format(yyMMddFormatter);
-                return parseDateResponse;
-            } else if (dateString.length() == 7) { // yyMMdd format
-                LocalDate date = LocalDate.parse(dateString, yyMMddFormatter);
+        if (dateString.length() == 8) { // yyyyMMdd format
+            LocalDate date = LocalDate.parse(dateString, yyyyMMddFormatter);
+            parseDateResponse.success = true;
+            parseDateResponse.fullDate = date.format(yyyyMMddFormatter);
+            parseDateResponse.minimalDate = date.format(yyMMddFormatter);
+            return parseDateResponse;
+        } else if (dateString.length() == 6) { // yyMMdd format
+            LocalDate date = LocalDate.parse(dateString, yyMMddFormatter);
 
-                // Adjust the year dynamically
-                int year = date.getYear();
-                if (year % 100 > LocalDate.now().getYear() % 100) {
-                    year = 1900 + (year % 100); // Previous century
-                } else {
-                    year = 2000 + (year % 100); // Current century
-                }
-
-                date = LocalDate.of(year, date.getMonthValue(), date.getDayOfMonth());
-                parseDateResponse.success = true;
-                parseDateResponse.fullDate = date.format(yyyyMMddFormatter);
-                parseDateResponse.minimalDate = date.format(yyMMddFormatter);
-                return parseDateResponse;
+            // Adjust the year dynamically
+            int year = date.getYear();
+            if (year % 100 > LocalDate.now().getYear() % 100) {
+                year = 1900 + (year % 100); // Previous century
             } else {
-                throw new ParsingException("Problem with parsing the date.");
+                year = 2000 + (year % 100); // Current century
             }
-        } catch (DateTimeParseException e) {
-            // Log the exception and update the response
-            parseDateResponse.success = false;
-            parseDateResponse.exception = e;
+
+            date = LocalDate.of(year, date.getMonthValue(), date.getDayOfMonth());
+            parseDateResponse.success = true;
+            parseDateResponse.fullDate = date.format(yyyyMMddFormatter);
+            parseDateResponse.minimalDate = date.format(yyMMddFormatter);
             return parseDateResponse;
-        } catch (ParsingException e) {
-            // Handle custom exceptions
-            parseDateResponse.success = false;
-            parseDateResponse.exception = e;
-            return parseDateResponse;
+        } else {
+            throw new ParsingException("Problem with parsing date.");
         }
     }
 
@@ -154,9 +139,5 @@ public class CredentialNumber {
 
     public String getMinimalDate() {
         return this.minimalDate;
-    }
-
-    public Exception getException() {
-        return this.exception;
     }
 }

@@ -1,32 +1,39 @@
 package src.main;
 
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class ValidityCheck {
+    CredentialNumber credential;
 
     public ValidityCheck(String credentialID) {
-        String regex = "^((\\d{6}|\\d{8})[+-]\\d{4}|\\d{10,12})$";
-
-        if (!isValidString(credentialID, regex)) {
-            throw new ValidationException("Invalid input format!");
+        if (!isValidString(credentialID)) {
+            throw new ValidationException("Doesn't match input format");
         }
 
-        CredentialNumber credential = new CredentialNumber(credentialID);
+        try {
+            credential = new CredentialNumber(credentialID);
+        } catch (ParsingException e) {
+            throw new ValidationException(e.getMessage());
+        } catch (DateTimeParseException e) {
+            throw new ValidationException(e.getMessage());
+        }
+
         try {
             if (isValidLuhn(credential.getMinimalDate(),
                     credential.getbirthNumber(),
                     credential.getCheckSum())) {
                 System.out.printf(
                         """
-                                -------------------------------------------------
-                                   VALID    Credential ID         : %s
+                                VALID       Credential ID         : %s
                                             Birth Number          : %s
                                             Checksum              : %s
                                             Birth Date (YYYYMMDD) : %s
                                             Credential Type       : %s
-                                            """,
+                                -------------------------------------------------
+                                        """,
                         credential.getCredentialID(),
                         credential.getbirthNumber(),
                         credential.getCheckSum(),
@@ -34,21 +41,7 @@ public class ValidityCheck {
                         credential.getCredType());
             }
         } catch (ValidationException e) {
-            System.out.printf(
-                    """
-                            -------------------------------------------------
-                              INVALID   Credential ID         : %s
-                                        Birth Number          : %s
-                                        Checksum              : %s
-                                        Birth Date (YYYYMMDD) : %s
-                                        Credential Type       : %s
-                                        """,
-                    credential.getCredentialID(),
-                    credential.getbirthNumber(),
-                    credential.getCheckSum(),
-                    credential.getFullDate(),
-                    credential.getCredType());
-            System.err.printf("ValidationException for pn=%s: %s%n\n", credentialID, e.getMessage());
+            throw new ValidationException(e.getMessage());
         }
     }
 
@@ -59,7 +52,8 @@ public class ValidityCheck {
      * @param regex The regex pattern to match.
      * @return True if the string matches the pattern, false otherwise.
      */
-    public static boolean isValidString(String input, String regex) {
+    public static boolean isValidString(String input) {
+        String regex = "^((\\d{6}|\\d{8})[+-]\\d{4}|\\d{10,12})$";
         return Pattern.matches(regex, input);
     }
 
@@ -129,17 +123,47 @@ public class ValidityCheck {
 
         System.out.println("PNS Validation Results:");
         for (String credentialID : pns) {
-            new ValidityCheck(credentialID);
+            try {
+                new ValidityCheck(credentialID);
+            } catch (ValidationException e) {
+                System.out.printf(
+                        """
+                                INVALID     Credential ID         : %s
+
+                                """, credentialID);
+                System.err.println(e.getMessage());
+                System.err.printf("-------------------------------------------------\n");
+            }
         }
 
         System.out.println("\nSAMS Validation Results:");
         for (String credentialID : sams) {
-            new ValidityCheck(credentialID);
+            try {
+                new ValidityCheck(credentialID);
+            } catch (ValidationException e) {
+                System.out.printf(
+                        """
+                                INVALID     Credential ID         : %s
+
+                                """, credentialID);
+                System.err.println(e.getMessage());
+                System.err.printf("-------------------------------------------------\n");
+            }
         }
 
         System.out.println("\nORGS Validation Results:");
         for (String credentialID : orgs) {
-            new ValidityCheck(credentialID);
+            try {
+                new ValidityCheck(credentialID);
+            } catch (ValidationException e) {
+                System.out.printf(
+                        """
+                                INVALID     Credential ID         : %s
+
+                                """, credentialID);
+                System.err.println(e.getMessage());
+                System.err.printf("-------------------------------------------------\n");
+            }
         }
     }
 }
