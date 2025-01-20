@@ -43,14 +43,12 @@ public class OrganizationNumber implements Credential {
                         VALID       Credential ID         : %s
                          ORG        Birth Number          : %s
                                     Checksum              : %s
-                                    Birth Date (YYYYMMDD) : %s
                                     Organization Type     : %s
                         -------------------------------------------------
                                 """,
                 this.credentialID,
                 this.birthNumber,
                 this.checkSum,
-                this.dateString,
                 this.orgType.toString());
     }
 

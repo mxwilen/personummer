@@ -61,7 +61,6 @@ VALID       Credential ID         : 190910799824
 VALID       Credential ID         : 556614-3185
  ORG        Birth Number          : 318
             Checksum              : 5
-            Birth Date (YYYYMMDD) : 556614
             Organization Type     : AKTIEBOLAG
 -------------------------------------------------
 ```
