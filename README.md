@@ -33,6 +33,39 @@ sh run_scanner.sh
 sh run_testvalues.sh
 ```
 
+### Exempel log
+```bash
+$ sh run_testvalues
+VALID       Credential ID         : 201701102384
+ PER        Birth Number          : 238
+            Checksum              : 4
+            Birth Date (YYYYMMDD) : 20170110
+            Age                   : 8
+-------------------------------------------------
+.
+.
+.
+INVALID     Credential ID         : 201701272394
+
+LuhnException: Checksum is not valid: yymmdd=170127, calculated checksum=3
+-------------------------------------------------
+.
+.
+.
+VALID       Credential ID         : 190910799824
+ SAM        Birth Number          : 982
+            Checksum              : 4
+            Birth Date (YYYYMMDD) : 19091019
+            Age                   : 115
+-------------------------------------------------
+VALID       Credential ID         : 556614-3185
+ ORG        Birth Number          : 318
+            Checksum              : 5
+            Birth Date (YYYYMMDD) : 556614
+            Organization Type     : AKTIEBOLAG
+-------------------------------------------------
+```
+
 ## Möjliga problem
 - Validering
   - Validering av organisationsnummer görs bara genom att titta på mittersta sifferparet.
