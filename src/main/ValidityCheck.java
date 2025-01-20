@@ -15,43 +15,72 @@ public class ValidityCheck {
 
     public ValidityCheck(String credentialID) {
         Credential credential;
-        if (!isValidString(credentialID)) {
-            throw new ValidationException("ValidationException: Input doesn't match required format");
-        }
 
         try {
-            // credential = new CredentialNumber(credentialID);
-            credential = new CredentialFactory().generateCredential(credentialID);
-        } catch (ParsingException e) {
-            throw new ValidationException(e.getMessage());
-        } catch (DateTimeParseException e) {
-            throw new ValidationException("DateTimeParseException: " + e.getMessage());
-        }
-
-        try {
-            if (isValidLuhn(credential.getMinimalDate(),
-                    credential.getBirthNumber(),
-                    credential.getCheckSum())) {
-                credential.outputResult();
+            // Checks if input matches required format. If not, skip the other tests/parsing
+            if (!isValidString(credentialID)) {
+                throw new ValidationException("ValidationException: Input doesn't match required format");
             }
-        } catch (LuhnException e) {
-            throw new ValidationException(e.getMessage());
+
+            // Coordination and Social Security Number: Parse input and check valid if date
+            // Orgnization: Parse input and map with organization type
+            try {
+                credential = new CredentialFactory().generateCredential(credentialID);
+            } catch (ParsingException e) {
+                throw new ValidationException("ParsingException: " + e.getMessage());
+            } catch (DateTimeParseException e) {
+                throw new ValidationException("DateTimeParseException: " + e.getMessage());
+            }
+
+            // Use parsed data to validate checksum
+            try {
+                if (isValidLuhn(credential.getMinimalDate(),
+                        credential.getBirthNumber(),
+                        credential.getCheckSum())) {
+                    credential.outputResult();
+                }
+            } catch (LuhnException e) {
+                throw new ValidationException("LuhnException: " + e.getMessage());
+            }
+
+        } catch (ValidationException e) {
+            // Exception has occured <=> Parsing failed <=> Invalid input
+            System.out.printf(
+                    """
+                            INVALID     Credential ID         : %s
+
+                            """, credentialID);
+            System.err.println(e.getMessage());
+            System.err.print("-------------------------------------------------\n");
         }
     }
 
     /**
      * Validates a string against a regex pattern.
-     *
-     * @param input The input string to validate.
-     * @return True if the string matches the pattern, false otherwise.
+     * 
+     * @param input unparsed input string
+     * @return boolean
      */
-    public static boolean isValidString(String input) {
+    private static boolean isValidString(String input) {
+        /*
+         * Regex:
+         * - 6 or 8 digits, then '+' or '-', then 4 digits
+         * or
+         * - 10 to 12 digits
+         */
         String regex = "^((\\d{6}|\\d{8})[+-]\\d{4}|\\d{10,12})$";
         return Pattern.matches(regex, input);
     }
 
-    // Method to check if a number is valid using the Luhn algorithm
-    public static boolean isValidLuhn(String yymmdd, String birthNumber, char checksum) {
+    /**
+     * Validates checksum by performing Luhn calculation on parsed input strings
+     * 
+     * @param yymmdd
+     * @param birthNumber
+     * @param checksum
+     * @return boolean
+     */
+    private static boolean isValidLuhn(String yymmdd, String birthNumber, char checkSum) {
         String localString = yymmdd + birthNumber;
         int digit;
         boolean alternate = true;
@@ -74,9 +103,9 @@ public class ValidityCheck {
         }
         int calculatedCheckSum = ((10 - (nSum % 10)) % 10);
 
-        boolean isValid = (Character.getNumericValue(checksum) == calculatedCheckSum);
+        boolean isValid = (Character.getNumericValue(checkSum) == calculatedCheckSum);
         if (!isValid)
-            throw new LuhnException("LuhnException: Checksum is not valid: yymmdd=" + yymmdd + ", calculated checksum="
+            throw new LuhnException("Checksum is not valid: yymmdd=" + yymmdd + ", calculated checksum="
                     + calculatedCheckSum);
 
         return true;
@@ -115,17 +144,7 @@ public class ValidityCheck {
         );
 
         for (String credentialID : creds) {
-            try {
-                new ValidityCheck(credentialID);
-            } catch (ValidationException e) {
-                System.out.printf(
-                        """
-                                INVALID     Credential ID         : %s
-
-                                """, credentialID);
-                System.err.println(e.getMessage());
-                System.err.print("-------------------------------------------------\n");
-            }
+            new ValidityCheck(credentialID);
         }
     }
 }

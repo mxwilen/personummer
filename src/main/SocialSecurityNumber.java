@@ -13,14 +13,14 @@ public class SocialSecurityNumber implements Credential {
     private final String credentialID;
     private final char checkSum;
     private final String birthNumber;
-    private final String parsedDateString;
+    private final String yyyymmdd;
     int age;
 
     public SocialSecurityNumber(String credentialID, char checkSum, String birthNumber, String dateString) {
         this.credentialID = credentialID;
         this.checkSum = checkSum;
         this.birthNumber = birthNumber;
-        this.parsedDateString = parseDateString(dateString);
+        this.yyyymmdd = parseDateString(dateString);
     }
 
     @Override
@@ -35,11 +35,11 @@ public class SocialSecurityNumber implements Credential {
 
     @Override
     public String getMinimalDate() {
-        return this.parsedDateString.substring(2);
+        return this.yyyymmdd.substring(2);
     }
 
     public String getFullDate() {
-        return this.parsedDateString;
+        return this.yyyymmdd;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class SocialSecurityNumber implements Credential {
                 .toFormatter()
                 .withResolverStyle(ResolverStyle.STRICT);
 
-        // LocalDate will throw exception if date is invalid
+        // LocalDate will throw exception if date is not an actual date (e.g. leap year)
         if (unparsedDateString.length() == 8) { // yyyyMMdd format
             LocalDate date = LocalDate.parse(unparsedDateString, yyyyMMddFormatter);
 
@@ -104,7 +104,7 @@ public class SocialSecurityNumber implements Credential {
             return date.format(yyyyMMddFormatter);
         } else {
             throw new ParsingException(
-                    "PER - ParsingException: Problem with parsing date. Date string neither 6 or 8 digits long");
+                    "Problem with parsing date. Date string neither 6 or 8 digits long");
         }
     }
 }

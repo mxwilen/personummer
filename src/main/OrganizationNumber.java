@@ -32,6 +32,7 @@ public class OrganizationNumber implements Credential {
 
     @Override
     public String getMinimalDate() {
+        // Only returns 6 digits
         return this.dateString.length() == 6 ? this.dateString : this.dateString.substring(2);
     }
 
@@ -53,17 +54,26 @@ public class OrganizationNumber implements Credential {
                 this.orgType.toString());
     }
 
-    private OrganizationType parseOrgType(String unparsedDateString) {
+    /**
+     * Takes the unparsed datestring and tries to match first digits to a
+     * organization type.
+     * - Organization mapper is now defaulting to a 'UNKNOWN' type, so the exception
+     * is kind of useless.
+     * 
+     * @param unparsedDateString
+     * @return OrganizationType
+     */
+    private OrganizationType parseOrgType(String dateString) {
         String firstDigit;
-        if (unparsedDateString.length() == 8) { // yyyyMMdd format
-            firstDigit = unparsedDateString.substring(2, 3);
+        if (dateString.length() == 8) { // yyyyMMdd format
+            firstDigit = dateString.substring(2, 3);
             this.orgType = OrganizationMapper.getOrganizationType(firstDigit);
-        } else if (unparsedDateString.length() == 6) { // yyMMdd format
-            firstDigit = unparsedDateString.substring(0, 1);
+        } else if (dateString.length() == 6) { // yyMMdd format
+            firstDigit = dateString.substring(0, 1);
             this.orgType = OrganizationMapper.getOrganizationType(firstDigit);
         } else {
             throw new ParsingException(
-                    "ORG - ParsingException: Problem with parsing organization type");
+                    "Problem with parsing organization type");
         }
 
         return this.orgType;

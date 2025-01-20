@@ -14,13 +14,14 @@ public class CoordinationNumber implements Credential {
     private final char checkSum;
     private final String birthNumber;
     private final String parsedDateString;
-    private final String birthDate;
+    private final String yyyymmdd;
     private int age;
 
+    // Only used by isValidDate()
     public static class DateCheckerResponse {
         boolean isValid;
         String coordDate;
-        String birthdate;
+        String yyyymmdd;
     }
 
     public CoordinationNumber(String credentialID, char checkSum, String birthNumber, String dateString) {
@@ -30,11 +31,9 @@ public class CoordinationNumber implements Credential {
 
         DateCheckerResponse response = isValidDate(dateString);
         if (!response.isValid)
-            throw new ParsingException(
-                    "SAM - ParsingException: Not a valid date");
+            throw new ParsingException("Not a valid date");
         this.parsedDateString = response.coordDate;
-        this.birthDate = response.birthdate;
-
+        this.yyyymmdd = response.yyyymmdd;
     }
 
     @Override
@@ -59,14 +58,14 @@ public class CoordinationNumber implements Credential {
                         VALID       Credential ID         : %s
                          SAM        Birth Number          : %s
                                     Checksum              : %s
-                                    Birth Date (YYMMDD)   : %s
+                                    Birth Date (YYYYMMDD) : %s
                                     Age                   : %d
                         -------------------------------------------------
                                 """,
                 this.credentialID,
                 this.birthNumber,
                 this.checkSum,
-                this.birthDate,
+                this.yyyymmdd,
                 this.age);
     }
 
@@ -74,6 +73,14 @@ public class CoordinationNumber implements Credential {
         this.age = age;
     }
 
+    /**
+     * Takes the unparsed datestring and tries to match it to a valid date.
+     * - If valid date, calulate age, correct century
+     * - If not valid date, throw exception (catched in root)
+     * 
+     * @param unparsedDateString
+     * @return DateCheckerResponse
+     */
     private DateCheckerResponse isValidDate(String unparsedDateString) {
         DateTimeFormatter yyyyMMddFormatter = new DateTimeFormatterBuilder()
                 .appendPattern("uuuuMMdd")
@@ -96,7 +103,7 @@ public class CoordinationNumber implements Credential {
             setAge(Period.between(date, LocalDate.now()).getYears());
 
             response.coordDate = unparsedDateString.substring(2);
-            response.birthdate = date.format(yyMMddFormatter);
+            response.yyyymmdd = date.format(yyyyMMddFormatter);
         } else if (unparsedDateString.length() == 6) { // yyMMdd format
             LocalDate date = LocalDate.parse(convertToDate(unparsedDateString), yyMMddFormatter);
 
@@ -114,28 +121,35 @@ public class CoordinationNumber implements Credential {
             setAge(Period.between(date, LocalDate.now()).getYears());
 
             response.coordDate = unparsedDateString;
-            response.birthdate = date.format(yyMMddFormatter);
+            response.yyyymmdd = date.format(yyyyMMddFormatter);
         } else {
             response.isValid = false;
             throw new ParsingException(
-                    "PER - ParsingException: Problem with parsing date. Date string neither 6 or 8 digits long");
+                    "Problem with parsing date. Date string neither 6 or 8 digits long");
         }
 
         response.isValid = true;
         return response;
     }
 
-    private String convertToDate(String invalidDate) {
+    /**
+     * Takes coordinationnumber's date string and subtracts 60 from the day number,
+     * and returns the new (valid) date string
+     * 
+     * @param coordDateString
+     * @return String
+     */
+    private String convertToDate(String coordDateString) {
         int day = Integer.parseInt(
-                invalidDate.substring(invalidDate.length() - 2, invalidDate.length() - 1));
+                coordDateString.substring(coordDateString.length() - 2, coordDateString.length() - 1));
         day -= 6;
 
         // Convert the modified value back to a character
         char dayChar = Character.forDigit(day, 10);
 
         // Insert the modified character back into the string at the same index
-        StringBuilder date = new StringBuilder(invalidDate);
-        date.setCharAt(invalidDate.length() - 2, dayChar);
+        StringBuilder date = new StringBuilder(coordDateString);
+        date.setCharAt(coordDateString.length() - 2, dayChar);
 
         return date.toString();
     }

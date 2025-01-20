@@ -35,11 +35,20 @@ $ chmod +x start.sh
 $ ./start.sh
 ```
 
-## Överskådlig struktur över programmet
+## Möjliga problem
+- Validering
+  - Validering av organisationsnummer görs bara genom att titta på mittersta sifferparet.
+    - Ett felinskrivet personummer med månad > 12 skulle alltså bli ett organisationsnummer.
+      - Men hur validera organisationsnummer vidare?
+  - Samma gäller för samordningsnummer (första siffran i dag > 3)
+  - Luhn täcker delvis
+
+## Egna notes från utveckling/problemuppställning
+> Ursäkta handstilen :)
+> Kartan gjordes i början av utvecklingen och fungerade som ett flödesdiagram (väldigt överskådlig bild utan specifika detaljer)
 <img src="programkarta.png" width="800px">
 
-## Mina egna notes från problemuppställning
-
+```
 ValidityCheck
 - logga kontroller som görs
 - input är string
@@ -73,3 +82,4 @@ LÄNGD
 - PER: [10, 13]
 - SAM: [10, 13]
 - ORG: [11, 13]
+```
