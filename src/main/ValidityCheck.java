@@ -112,11 +112,15 @@ public class ValidityCheck {
         return true;
     }
 
+    /**
+     * Only used when runnning ´run_scanner.sh´
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String input;
 
         while (true) {
+            System.out.print("Provide input ('q' to quit): ");
             input = scanner.nextLine();
             if (input.equals("q")
                     || input.equals("quit")

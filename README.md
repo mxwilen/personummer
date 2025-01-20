@@ -2,7 +2,8 @@
 ```bash
 .
 ├── README.md
-├── start.sh                               # bash script för kompilering och exekvering
+├── run_scanner.sh                         # bash script för kompilering och exekvering av huvudprogram
+├── run_testvalues.sh                      # bash script för kompilering och exekvering av testvärden
 └── src
     ├── main
     │   ├── Exceptions                     # Diverse exceptions
@@ -17,22 +18,19 @@
     │   ├── OrganizationNumber.java        # Organisationsnummer
     │   ├── SocialSecurityNumber.java      # Personnummer
     │   └── ValidityCheck.java             # huvudklass (main, valideringscheck av luhn, mm)
-    └── test
+    └── test                               # huvudklass (main, valideringscheck av luhn, mm)
+        └── ValidityCheckTest.java         # Kör Omegapoints testvärden
 ```
 
 ## Exekvering (från CLI)
 > Ska även funka fint genom Intellij :)
 
-Kör startscriptet från root dir genom 
-```
-sh start.sh
-```
-
-Alternativt:
-```
-$ chmod +x start.sh
-
-$ ./start.sh
+Det finns två startscript. Den ena (`run_scanner.sh`) tar input från CLI, det andra (`run_testvalues.sh`) kör programmet på testvärdena från problem-PM:et.
+Kör valda startscriptet från root dir genom:
+```bash
+sh run_scanner.sh
+# eller
+sh run_testvalues.sh
 ```
 
 ## Möjliga problem
