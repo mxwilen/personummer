@@ -106,7 +106,7 @@ public class ValidityCheck {
 
         boolean isValid = (Character.getNumericValue(checkSum) == calculatedCheckSum);
         if (!isValid)
-            throw new LuhnException("Checksum is not valid: yymmdd=" + yymmdd + ", calculated checksum="
+            throw new LuhnException("Checksum is not valid: input=" + localString + ", calculated checksum="
                     + calculatedCheckSum);
 
         return true;

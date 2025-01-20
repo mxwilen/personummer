@@ -47,7 +47,7 @@ VALID       Credential ID         : 201701102384
 .
 INVALID     Credential ID         : 201701272394
 
-LuhnException: Checksum is not valid: yymmdd=170127, calculated checksum=3
+LuhnException: Checksum is not valid: input=170127239, calculated checksum=3
 -------------------------------------------------
 .
 .
