@@ -32,6 +32,7 @@ public class CoordinationNumber implements Credential {
         DateCheckerResponse response = isValidDate(dateString);
         if (!response.isValid)
             throw new ParsingException("Not a valid date");
+
         this.parsedDateString = response.coordDate;
         this.yyyymmdd = response.yyyymmdd;
     }

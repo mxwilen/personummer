@@ -8,6 +8,7 @@ public class OrganizationMapper {
         AKTIEBOLAG, // Aktiebolag, filialer, banker, försäkringsbolag, europabolag
         HANDELSBOLAG, // Handelsbolag och kommanditbolag
         BOSTADSRATTSFORENING, // Bostadsrättsföreningar, ekonomiska föreningar, etc.
+        EKONOMISKFÖRENING, // Bostadsrättsföreningar, ekonomiska föreningar, etc.
         TROSSAMFUND, // Trossamfund
         // STATLIGA_MYNDIGHETER, // Statliga myndigheter
         UTLANDSKA_FORETAG, // Utländska företag

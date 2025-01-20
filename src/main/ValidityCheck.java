@@ -24,7 +24,7 @@ public class ValidityCheck {
             // Coordination and Social Security Number: Parse input and check valid if date
             // Orgnization: Parse input and map with organization type
             try {
-                credential = new CredentialFactory().generateCredential(credentialID);
+                credential = CredentialFactory.generateCredential(credentialID);
             } catch (ParsingException e) {
                 throw new ValidationException("ParsingException: " + e.getMessage());
             } catch (DateTimeParseException e) {
@@ -61,7 +61,7 @@ public class ValidityCheck {
      * @return boolean
      */
     private static boolean isValidString(String input) {
-        /*
+        /**
          * Regex:
          * - 6 or 8 digits, then '+' or '-', then 4 digits
          * or
