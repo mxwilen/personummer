@@ -18,8 +18,8 @@
     │   ├── OrganizationNumber.java        # Organisationsnummer
     │   ├── SocialSecurityNumber.java      # Personnummer
     │   └── ValidityCheck.java             # huvudklass (main, valideringscheck av luhn, mm)
-    └── test                               # huvudklass (main, valideringscheck av luhn, mm)
-        └── ValidityCheckTest.java         # Kör Omegapoints testvärden
+    └── test
+        └── ValidityCheckTest.java         # Kör testvärden
 ```
 
 ## Exekvering (från CLI)
